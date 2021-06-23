@@ -15,42 +15,52 @@
         // Grant CesiumJS access to your ion assets
         Cesium.Ion.defaultAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJmZjkwOTFiOC0zN2RkLTQ0MzItODAzMC1mMzFiNjUzNTYwNWIiLCJpZCI6NTkxMDgsImlhdCI6MTYyMzgyNjI0Mn0.5-ULH8dhNNXMVhzYOFx3FVtviSFwnFPxq2Xf8rZajjs";
 
-        var viewer = new Cesium.Viewer("cesiumContainer", {
-            terrainProvider: new Cesium.CesiumTerrainProvider({
-                url: Cesium.IonResource.fromAssetId(1),
-            }),
+        //get cesium terrain
+        const viewer = new Cesium.Viewer('cesiumContainer', {
+            terrainProvider: Cesium.createWorldTerrain()
         });
         viewer.scene.globe.depthTestAgainstTerrain = true;
 
-        viewer.scene.primitives.add(
-            new Cesium.Cesium3DTileset({
-                url: Cesium.IonResource.fromAssetId(96188),
-            })
-        );
+        //insert osm buildings
+        const buildingsTileset = viewer.scene.primitives.add(Cesium.createOsmBuildings());
 
-        var tileset = viewer.scene.primitives.add(
+        // Hide individual buildings in this area using 3D Tiles Styling language.
+        buildingsTileset.style = new Cesium.Cesium3DTileStyle({
+            // Create a style rule to control each building's "show" property.
+            show: {
+                conditions: [
+                    // Any building that has this elementId will have `show = false`.
+                    ['${elementId} === 10907389', false],
+                    ['${elementId} === 783785586', false],
+                    // If a building does not have one of these elementIds, set `show = true`.
+                    [true, true]
+                ]
+            },
+            // Set the default color style for this particular 3D Tileset.
+            // For any building that has a `cesium#color` property, use that color, otherwise make it white.
+            color: "Boolean(${feature['cesium#color']}) ? color(${feature['cesium#color']}) : color('#ffffff')"
+        });
+
+        //insert advent hospital
+        const tileset = viewer.scene.primitives.add(
             new Cesium.Cesium3DTileset({
                 url: Cesium.IonResource.fromAssetId(485007),
             })
         );
 
+        //zooming to obj
         tileset.readyPromise
             .then(function () {
                 viewer.zoomTo(tileset);
-
-                // Apply the default style if it exists
-                var extras = tileset.asset.extras;
-                if (
-                    Cesium.defined(extras) &&
-                    Cesium.defined(extras.ion) &&
-                    Cesium.defined(extras.ion.defaultStyle)
-                ) {
-                    tileset.style = new Cesium.Cesium3DTileStyle(extras.ion.defaultStyle);
-                }
             })
             .otherwise(function (error) {
                 console.log(error);
             });
+
+        //toggling building
+        document.querySelector('#toggle-building').onclick = function () {
+            tileset.show = !tileset.show;
+        };
 
     </script>
     </div>
