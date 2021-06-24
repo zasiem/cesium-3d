@@ -44,23 +44,34 @@
         //insert advent hospital
         const tileset = viewer.scene.primitives.add(
             new Cesium.Cesium3DTileset({
-                url: Cesium.IonResource.fromAssetId(485007),
+                url: Cesium.IonResource.fromAssetId(489121),
             })
         );
 
         //zooming to obj
         tileset.readyPromise
-            .then(function () {
+            .then(function (tileset) {
                 viewer.zoomTo(tileset);
             })
             .otherwise(function (error) {
                 console.log(error);
             });
 
-        //toggling building
-        document.querySelector('#toggle-building').onclick = function () {
-            tileset.show = !tileset.show;
-        };
+        //picking object for infobox
+        var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+        handler.setInputAction(function (click) {
+            var pickedObject = viewer.scene.pick(click.position);
+            if (Cesium.defined(pickedObject)) {
+                if (!(pickedObject instanceof Cesium.Cesium3DTileFeature)) {
+                    var selectedEntity = new Cesium.Entity()
+                    // Set feature infobox description
+                    selectedEntity.name = "Name";
+                    selectedEntity.description =
+                        'Description';
+                    viewer.selectedEntity = selectedEntity;
+                }
+            }
+        }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
     </script>
     </div>
