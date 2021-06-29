@@ -21,6 +21,12 @@
         });
         viewer.scene.globe.depthTestAgainstTerrain = true;
 
+        //custom imagery using single tile imagery provider
+        viewer.scene.imageryLayers.addImageryProvider(new Cesium.SingleTileImageryProvider({
+            url: '/images/seika.png',
+            rectangle: Cesium.Rectangle.fromDegrees(107.601729, -6.892425, 107.605334, -6.890699),
+        }));
+
         //insert osm buildings
         const buildingsTileset = viewer.scene.primitives.add(Cesium.createOsmBuildings());
 
