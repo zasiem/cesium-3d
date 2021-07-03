@@ -22,10 +22,10 @@
         viewer.scene.globe.depthTestAgainstTerrain = true;
 
         //custom imagery using single tile imagery provider
-        viewer.scene.imageryLayers.addImageryProvider(new Cesium.SingleTileImageryProvider({
-            url: '/images/seika.png',
-            rectangle: Cesium.Rectangle.fromDegrees(107.601729, -6.892425, 107.605334, -6.890699),
-        }));
+        // viewer.scene.imageryLayers.addImageryProvider(new Cesium.SingleTileImageryProvider({
+        //     url: '/images/seika.png',
+        //     rectangle: Cesium.Rectangle.fromDegrees(107.601729, -6.892425, 107.605334, -6.890699),
+        // }));
 
         //insert osm buildings
         const buildingsTileset = viewer.scene.primitives.add(Cesium.createOsmBuildings());
@@ -38,8 +38,15 @@
                     // Any building that has this elementId will have `show = false`.
                     ['${elementId} === 10907389', false],
                     ['${elementId} === 783785586', false],
+                    ['${elementId} === 513238429', false],
+                    ['${elementId} === 784393389', false],
+                    ['${elementId} === 383052768', false],
+                    ['${elementId} === 383052767', false],
+                    ['${elementId} === 885883727', false],
+                    ['${elementId} === 885883729', false],
+                    ['${elementId} === 857927855', false],
                     // If a building does not have one of these elementIds, set `show = true`.
-                    [true, true]
+                    [true, true, true, true, true, true, true, true, true]
                 ]
             },
             // Set the default color style for this particular 3D Tileset.
@@ -47,21 +54,50 @@
             color: "Boolean(${feature['cesium#color']}) ? color(${feature['cesium#color']}) : color('#ffffff')"
         });
 
-        //insert advent hospital
-        const tileset = viewer.scene.primitives.add(
-            new Cesium.Cesium3DTileset({
-                url: Cesium.IonResource.fromAssetId(489121),
-            })
-        );
+        //insert multiple obj
+        const tiles = [
+            '489121',
+            '501450',
+            '501455',
+            '501452',
+            '501447',
+            '501091',
+            '501408',
+            '501436',
+            '501422',
+            '501459',
+            '501426',
+            '501418',
+            '501410',
+            '501432',
+            '501439',
+        ];
 
-        //zooming to obj
-        tileset.readyPromise
-            .then(function (tileset) {
-                viewer.zoomTo(tileset);
-            })
-            .otherwise(function (error) {
-                console.log(error);
-            });
+        tiles.map((tile, index) => {
+            if (index == 0) {
+                const tileset = viewer.scene.primitives.add(
+                    new Cesium.Cesium3DTileset({
+                        url: Cesium.IonResource.fromAssetId(tile),
+                    })
+                );
+
+                //zooming to obj
+                tileset.readyPromise
+                    .then(function (tileset) {
+                        viewer.zoomTo(tileset);
+                    })
+                    .otherwise(function (error) {
+                        console.log(error);
+                    });
+
+            } else {
+                viewer.scene.primitives.add(
+                    new Cesium.Cesium3DTileset({
+                        url: Cesium.IonResource.fromAssetId(tile),
+                    })
+                );
+            }
+        })
 
         //picking object for infobox
         var handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
