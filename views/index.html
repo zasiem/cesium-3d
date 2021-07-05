@@ -10,6 +10,10 @@
 </head>
 
 <body>
+    <div id="analyst" style="margin: 20px 0px">
+        <span></span>
+        <a href="#" target="_blank" style="padding: 10px; margin: 10px 0px; background-color: blue; color: white; display: block; width: 10%; text-align: center; text-decoration: none;">Anaylst</a>
+    </div>
     <div id="cesiumContainer" style="height: 80vh !important"></div>
     <script>
         // Grant CesiumJS access to your ion assets
@@ -106,8 +110,14 @@
             if (Cesium.defined(pickedObject)) {
                 if (!(pickedObject instanceof Cesium.Cesium3DTileFeature)) {
                     var selectedEntity = new Cesium.Entity()
+                    console.log(selectedEntity.id);
+
+                    //set analyst name
+                    document.querySelector('#analyst span').textContent = selectedEntity.id;
+                    document.querySelector('#analyst a').setAttribute('href', 'https://cesium.com/ion/stories/viewer/?id=4fe639a0-5cc3-48c1-b80f-3f44f5df1979')
+
                     // Set feature infobox description
-                    selectedEntity.name = "Name";
+                    selectedEntity.name = selectedEntity.id;
                     selectedEntity.description =
                         'Description';
                     viewer.selectedEntity = selectedEntity;
