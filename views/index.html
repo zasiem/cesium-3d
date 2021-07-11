@@ -6,7 +6,7 @@
     <!-- Include the CesiumJS JavaScript and CSS files -->
     <script src="https://cesium.com/downloads/cesiumjs/releases/1.82/Build/Cesium/Cesium.js"></script>
     <link href="https://cesium.com/downloads/cesiumjs/releases/1.82/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
-    <title>Cesium</title>
+    <title><%= title %></title>
 </head>
 
 <body>
@@ -26,10 +26,10 @@
         viewer.scene.globe.depthTestAgainstTerrain = true;
 
         //custom imagery using single tile imagery provider
-        // viewer.scene.imageryLayers.addImageryProvider(new Cesium.SingleTileImageryProvider({
-        //     url: '/images/seika.png',
-        //     rectangle: Cesium.Rectangle.fromDegrees(107.601729, -6.892425, 107.605334, -6.890699),
-        // }));
+        viewer.scene.imageryLayers.addImageryProvider(new Cesium.SingleTileImageryProvider({
+            url: '/image/path',
+            rectangle: Cesium.Rectangle.fromDegrees(107.601729, -6.892425, 107.605334, -6.890699),
+        }));
 
         //insert osm buildings
         const buildingsTileset = viewer.scene.primitives.add(Cesium.createOsmBuildings());
